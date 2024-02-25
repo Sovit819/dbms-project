@@ -17,7 +17,7 @@ class Leads {
 			$sqlWhere = " WHERE c.sales_rep = '".$_SESSION["userid"]."' and c.status = 'Lead'";
 		}	
 		
-		$sqlQuery = "SELECT c.id, c.contact_first, c.company, c.industry, c.budget, u.name, c.phone, c.website, c.status, c.initial_contact_date, c.email
+		$sqlQuery = "SELECT c.id, c.contact_first, c.company, c.industry, c.budget, u.name, c.phone, c.website, c.status, c.initial_contact_date, c.email,c.campaign_id
 		FROM ".$this->contactTable." c
 		LEFT JOIN ".$this->userTable." u ON c.sales_rep = u.id $sqlWhere";
 		
@@ -74,8 +74,8 @@ class Leads {
 		if($this->lead_first) {
 
 			$stmt = $this->conn->prepare("
-			INSERT INTO ".$this->contactTable."(`contact_first`, `contact_last`, `company`, `industry`, `budget`, `sales_rep`, `phone`, `email`, `website`, `status`)
-			VALUES(?,?,?,?,?,?,?,?,?,?)");
+			INSERT INTO ".$this->contactTable."(`contact_first`, `contact_last`, `company`, `industry`, `budget`, `sales_rep`, `phone`, `email`, `website`, `status`,`campaign_id`)
+			VALUES(?,?,?,?,?,?,?,?,?,?,?)");
 		
 			$this->lead_first = htmlspecialchars(strip_tags($this->lead_first));			
 			$this->lead_last = htmlspecialchars(strip_tags($this->lead_last));
@@ -85,9 +85,10 @@ class Leads {
 			$this->lead_status = htmlspecialchars(strip_tags($this->lead_status));	
 			$this->lead_email = htmlspecialchars(strip_tags($this->lead_email));
 			$this->lead_phone = htmlspecialchars(strip_tags($this->lead_phone));
-			$this->lead_website = htmlspecialchars(strip_tags($this->lead_website)); 					
+			$this->lead_website = htmlspecialchars(strip_tags($this->lead_website)); 	
+			$this->campaign_id = htmlspecialchars(strip_tags($this->campaign_id));	
 			
-			$stmt->bind_param("ssssiiisss", $this->lead_first, $this->lead_last, $this->lead_company, $this->lead_industry, $this->lead_budget, $_SESSION["userid"], $this->lead_phone, $this->lead_email, $this->lead_website, $this->lead_status);
+			$stmt->bind_param("ssssiiisssi", $this->lead_first, $this->lead_last, $this->lead_company, $this->lead_industry, $this->lead_budget, $_SESSION["userid"], $this->lead_phone, $this->lead_email, $this->lead_website, $this->lead_status,$this->campaign_id);
 			
 			if($stmt->execute()){
 				return true;

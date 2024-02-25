@@ -13,21 +13,25 @@ if($user->loggedIn()) {
 }
 
 $loginMessage = '';
-if(!empty($_POST["login"]) && !empty($_POST["email"]) && !empty($_POST["password"]) && !empty($_POST["loginType"]) && $_POST["loginType"]) {	
-	$user->email = $_POST["email"];
-	$user->password = $_POST["password"];	
-	$user->loginType = $_POST["loginType"];
-	if($user->login()) {
-		header("Location: tasks.php");	
-	} else {
-		$loginMessage = 'Invalid login! Please try again.';
-	}
+
+if(!empty($_POST["login"]) && !empty($_POST["email"]) && !empty($_POST["password"]) && !empty($_POST["loginType"]) && $_POST["loginType"]) { 
+    $email = $_POST["email"];
+    $password = $_POST["password"];   
+    $loginType = $_POST["loginType"];
+    if($user->login($email, $password, $loginType)) { 
+        header("Location: tasks.php");   
+    } else {
+        $loginMessage = 'Invalid login! Please try again.';
+		
+    }
 } else {
-	$loginMessage = 'Fill all fields.';
+    $loginMessage = 'Fill all fields.';
+
 }
+
 include('inc/header4.php');
 ?>
-<title>phpzag.com : Demo Customer Relationship Management (CRM) System</title>
+<title>CRM System</title>
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" />
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
 <body>
@@ -51,7 +55,7 @@ include('inc/header4.php');
 					</div>	
 
 					<label class="radio-inline">
-					  &nbsp;<input type="radio"  name="loginType" value="manager">&nbsp;Sales Manager
+					  &nbsp;<input type="radio"  name="loginType" value="admin">&nbsp;Sales Manager
 					</label>
 					<label class="radio-inline">
 					  &nbsp;<input type="radio" name="loginType" value="sales">&nbsp;Sales People
@@ -68,7 +72,7 @@ include('inc/header4.php');
 					<strong>Email: </strong>mark@phpzag.com<br>
 					<strong>Password:</strong> 123<br>
 									
-					
+
 				</form>   
 			</div>                     
 		</div>  

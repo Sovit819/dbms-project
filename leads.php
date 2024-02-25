@@ -139,6 +139,26 @@ include('inc/header4.php');
 							<input type="text" class="form-control" id="lead_website" name="lead_website" placeholder="Website" required>									
 						</div>					
 					</div>
+					<div class="form-group">
+					<label for="campaign_id" class="control-label">Campaign</label>
+					<select class="form-control" id="campaign_id" name="campaign_id">
+					<option value="">Select Campaign</option>
+					<?php 
+
+					$campaigns = $user->listCampaigns();
+
+				
+					if ($campaigns) {
+					
+						while ($campaign = $campaigns->fetch_assoc()) {
+							?>
+							<option value="<?php echo $campaign['id']; ?>"><?php echo $campaign['name']; ?></option>
+							<?php
+						}
+					}
+					?>
+				</select>
+				</div>
 					<div class="modal-footer">
 						<input type="hidden" name="id" id="id" />
 						<input type="hidden" name="action" id="action" value="" />

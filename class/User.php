@@ -2,37 +2,45 @@
 class User {	
    
 	private $userTable = 'crm_users';
-	private $contactTable = 'crm_contact';		
+	private $contactTable = 'crm_contact';
+	private $campaignTable = 'crm_campaign';		
 	private $conn;
 	
 	public function __construct($db){
         $this->conn = $db;
     }	    
 	
-	public function login(){
-		if($this->email && $this->password) {			
-			$sqlQuery = "
-				SELECT * FROM ".$this->userTable."
-				WHERE status = 1 
-				AND roles = ? AND email = ? AND password = ?";			
-			$stmt = $this->conn->prepare($sqlQuery);
-			$password = md5($this->password);
-			$stmt->bind_param("sss", $this->loginType, $this->email, $password);	
-			$stmt->execute();
-			$result = $stmt->get_result();
-			if($result->num_rows > 0){
-				$user = $result->fetch_assoc();
-				$_SESSION["userid"] = $user['id'];
-				$_SESSION["role"] = $this->loginType;
-				$_SESSION["name"] = $user['email'];					
-				return 1;		
-			} else {
-				return 0;		
-			}			
-		} else {
-			return 0;
-		}
-	}
+
+public function login($email, $password, $loginType){
+    if($email && $password) {
+        
+        $table = ($loginType === 'admin') ? 'crm_admin' : 'crm_users';
+        
+        $sqlQuery = "SELECT * FROM $table WHERE status = 1 AND email = ? AND password = ?";
+        $stmt = $this->conn->prepare($sqlQuery);
+		$password = md5($password);
+        $stmt->bind_param("ss", $email, $password);   
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        // Debugging statement
+        echo "Number of rows: " . $result->num_rows . "<br>";
+        
+        if($result->num_rows > 0){
+            $user = $result->fetch_assoc();
+            session_start();
+            $_SESSION["userid"] = $user['id'];
+            $_SESSION["role"] = $loginType;
+            $_SESSION["name"] = $user['name'];                 
+            return true;        
+        } else {
+            return false;       
+        }           
+    } else {
+        return false;
+    }
+}
+
 	
 	public function loggedIn (){
 		if(!empty($_SESSION["userid"])) {
@@ -53,8 +61,8 @@ class User {
 	public function listSalesRep(){
 
 		$sqlWhere = '';
-		if($_SESSION["role"] == 'manager') { 
-			$sqlWhere = "WHERE roles = 'sales' and status = 1";
+		if($_SESSION["role"] == 'admin') { 
+			$sqlWhere = "WHERE  status = 1";
 		}		
 		$sqlQuery = "SELECT * FROM ".$this->userTable." $sqlWhere";
 		
@@ -103,7 +111,7 @@ class User {
 	
 	public function getContacts(){
 		if($this->id) {
-			$sqlQuery = "SELECT c.id, c.contact_first, c.contact_last, c.company, c.industry, c.status, c.budget
+			$sqlQuery = "SELECT c.id, c.contact_first, c.contact_last, c.company,  c.status, c.budget
 			FROM ".$this->contactTable." c  
 			WHERE c.sales_rep = ?";				
 			$stmt = $this->conn->prepare($sqlQuery);
@@ -117,7 +125,7 @@ class User {
 				$rows[] = ucfirst($contact['contact_first']);			
 				$rows[] = $contact['contact_last'];
 				$rows[] = $contact['company'];
-				$rows[] = $contact['industry'];	
+				
 				$rows[] = $contact['status'];
 				$rows[] = $contact['budget'];				
 				$records[] = $rows;
@@ -134,16 +142,16 @@ class User {
 		if($this->sales_name) {
 
 			$stmt = $this->conn->prepare("
-			INSERT INTO ".$this->userTable."(`name`, `email`, `password`, `roles`, `status`)
-			VALUES(?,?,?,?,?)");
+			INSERT INTO ".$this->userTable."(`name`, `email`, `password`,  `status`)
+			VALUES(?,?,?,?)");
 		
 			$this->sales_name = htmlspecialchars(strip_tags($this->sales_name));			
 			$this->sales_email = htmlspecialchars(strip_tags($this->sales_email));
 			$this->sales_password = md5(htmlspecialchars(strip_tags($this->sales_password)));
-			$this->roles = 'sales';		
+				
 			$this->status = 1;			
 			
-			$stmt->bind_param("ssssi", $this->sales_name, $this->sales_email, $this->sales_password, $this->roles, $this->status);
+			$stmt->bind_param("ssssi", $this->sales_name, $this->sales_email, $this->sales_password,  $this->status);
 			
 			if($stmt->execute()){
 				return true;
@@ -206,7 +214,7 @@ class User {
 	function salesRepList(){		
 		$stmt = $this->conn->prepare("
 		SELECT id, name FROM ".$this->userTable." 
-		WHERE roles = 'sales' and status = 1");				
+		WHERE  status = 1");				
 		$stmt->execute();			
 		$result = $stmt->get_result();		
 		return $result;	
@@ -219,6 +227,51 @@ class User {
 		$result = $stmt->get_result();		
 		return $result;	
 	}
+
+
+	public function listCampaigns(){
+        $sqlQuery = "SELECT * FROM ".$this->campaignTable;
+        $stmt = $this->conn->prepare($sqlQuery);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result;
+    }
+	public function insertCampaign($name, $start_date, $end_date, $description, $status, $social_media){
+        $sqlQuery = "INSERT INTO ".$this->campaignTable."(`name`, `start_date`, `end_date`, `description`, `status`, `social_media`) VALUES (?, ?, ?, ?, ?, ?)";
+        $stmt = $this->conn->prepare($sqlQuery);
+        $stmt->bind_param("ssssss", $name, $start_date, $end_date, $description, $status, $social_media);
+        if($stmt->execute()){
+            return true;
+        }
+        return false;
+    }
+	public function getCampaign($campaign_id){
+        $sqlQuery = "SELECT * FROM ".$this->campaignTable." WHERE id = ?";
+        $stmt = $this->conn->prepare($sqlQuery);
+        $stmt->bind_param("i", $campaign_id);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+        return $result;
+    }
+
+    public function updateCampaign($campaign_id, $name, $start_date, $end_date, $description, $status, $social_media){
+        $sqlQuery = "UPDATE ".$this->campaignTable." SET `name` = ?, `start_date` = ?, `end_date` = ?, `description` = ?, `status` = ?, `social_media` = ? WHERE `id` = ?";
+        $stmt = $this->conn->prepare($sqlQuery);
+        $stmt->bind_param("sssssii", $name, $start_date, $end_date, $description, $status, $social_media, $campaign_id);
+        if($stmt->execute()){
+            return true;
+        }
+        return false;
+    }
+	public function deleteCampaign($campaign_id){
+        $sqlQuery = "DELETE FROM ".$this->campaignTable." WHERE `id` = ?";
+        $stmt = $this->conn->prepare($sqlQuery);
+        $stmt->bind_param("i", $campaign_id);
+        if($stmt->execute()){
+            return true;
+        }
+        return false;
+    }
 
 }
 ?>

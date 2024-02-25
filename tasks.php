@@ -20,32 +20,32 @@ include('inc/header4.php');
 		<div class="row row-offcanvas row-offcanvas-left">
 			<?php include('left_menus.php'); ?>
 			<div class="col-md-9 col-lg-10 main"> 
-			<h2>Tasks</h2> 
-		<div class="panel-heading">
-			<div class="row">
-				<div class="col-md-10">
-					<h3 class="panel-title"></h3>
-				</div>
-				<div class="col-md-2" align="right">
-					<button type="button" id="addTasks" class="btn btn-info" title="Add Tasks"><span class="glyphicon glyphicon-plus">Add Task</span></button>
+				<h2>Tasks</h2> 
+				<div class="panel-heading">
+				<div class="row">
+					<div class="col-md-10">
+						<h3 class="panel-title"></h3>
+					</div>
+					<div class="col-md-2" align="right">
+						<button type="button" id="addTasks" class="btn btn-info" title="Add Tasks"><span class="glyphicon glyphicon-plus">Add Task</span></button>
+					</div>
 				</div>
 			</div>
+			<table id="tasksListing" class="table table-bordered table-striped">
+				<thead>
+					<tr>						
+						<th>Id</th>					
+						<th>Description</th>					
+						<th>Due Date</th>
+						<th>Contact</th>
+						<th>Sales Rep</th>
+						<th>Status</th>					
+						<th></th>	
+						<th></th>						
+					</tr>
+				</thead>
+			</table>
 		</div>
-		<table id="tasksListing" class="table table-bordered table-striped">
-			<thead>
-				<tr>						
-					<th>Id</th>					
-					<th>Description</th>					
-					<th>Due Date</th>
-					<th>Contact</th>
-					<th>Sales Rep</th>
-					<th>Status</th>					
-					<th></th>	
-					<th></th>						
-				</tr>
-			</thead>
-		</table>
-	</div>
 	
 	
 	<div id="taskModal" class="modal fade">

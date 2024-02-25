@@ -8,7 +8,41 @@
 --
 -- Table structure for table `crm_contact`
 --
+CREATE TABLE `crm_campaign` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
+  `description` text,
+  `status` enum('Active','Inactive') NOT NULL DEFAULT 'Active',
+  `social_media` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+INSERT INTO `crm_campaign` (`name`, `start_date`, `end_date`, `description`, `status`, `social_media`) VALUES
+('Winter Sale Campaign', '2024-01-01', '2024-02-29', 'Annual winter sale promotion', 'Active', 'Facebook'),
+('Summer Promo', '2024-06-01', '2024-08-31', 'Summer promotional offer', 'Active', 'Instagram'),
+('Spring Clearance', '2024-03-15', '2024-04-15', 'Clearance sale for spring season', 'Inactive', 'Twitter');
+
+
+-- CREATE TABLE `crm_contact` (
+--   `id` int(11) NOT NULL,
+--   `contact_first` varchar(255) NOT NULL,
+--   `contact_last` varchar(255) NOT NULL,
+--   `title` varchar(255) NOT NULL,
+--   `company` varchar(255) NOT NULL,
+--   `address` text NOT NULL,
+--   `phone` int(11) NOT NULL,
+--   `email` varchar(50) NOT NULL,
+--   `status` enum('Lead','Proposal','Customer / won','Archive') NOT NULL,
+--   `website` varchar(255) NOT NULL,
+--   `sales_rep` int(11) NOT NULL,
+--   `project_description` text NOT NULL,
+--   `proposal_due_date` varchar(255) NOT NULL,
+--   `budget` int(11) NOT NULL,
+--   `campaign_id` int(11), -- New column for campaign ID
+--   FOREIGN KEY (`campaign_id`) REFERENCES `crm_campaign`(`id`) ON DELETE SET NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 CREATE TABLE `crm_contact` (
   `id` int(11) NOT NULL,
   `contact_title` varchar(255) NOT NULL,
@@ -33,18 +67,27 @@ CREATE TABLE `crm_contact` (
   `project_description` text NOT NULL,
   `proposal_due_date` varchar(255) NOT NULL,
   `budget` int(11) NOT NULL,
-  `deliverables` varchar(255) NOT NULL
+  `deliverables` varchar(255) NOT NULL,
+  `campaign_id` int(11), -- New column for campaign ID,
+ FOREIGN KEY (`campaign_id`) REFERENCES `crm_campaign`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+INSERT INTO `crm_contact` (`id`, `contact_title`, `contact_first`, `contact_middle`, `contact_last`, `initial_contact_date`, `title`, `company`, `industry`, `address`, `city`, `state`, `country`, `zip`, `phone`, `email`, `status`, `website`, `sales_rep`, `project_type`, `project_description`, `proposal_due_date`, `budget`, `deliverables`,`campaign_id`) VALUES
+(1, '', 'David', '', 'Smith', '0000-00-00 00:00:00', '', 'ABC', 'Food', '', '', '', 'France', 112245, 123456789, 'david@tes.com', 'Lead', 'www.testabc.com', 1, '', '', '', 15000, '',1),
+(2, '', 'Goerge', '', 'Wood', '0000-00-00 00:00:00', '', 'XYZ', 'Motor', '', '', '', '', 0, 123456789, 'goerg@test.com', 'Lead', 'www.mtobc.com', 1, '', '', '', 0, '',2),
+(5, '', 'adam', '', 'smith', '2020-11-13 20:47:02', '', 'vzxvzx', 'xzvzx', '', '', '', '', 0, 123456789, 'dgsdgsd@wty.com', 'Proposal', 'www.mtobc.com', 1, '', '', '', 0, '',2),
+(6, '', 'xvzxxzv', '', 'xvzxvzxv', '2020-11-13 20:56:27', '', 'uyttyi', 'reyery', '', '', '', '', 0, 123456789, 'werwrwe@wr.com', 'Customer / won', 'www.fggg.com', 1, '', '', '', 3400, '',1);
 
 --
 -- Dumping data for table `crm_contact`
 --
 
-INSERT INTO `crm_contact` (`id`, `contact_title`, `contact_first`, `contact_middle`, `contact_last`, `initial_contact_date`, `title`, `company`, `industry`, `address`, `city`, `state`, `country`, `zip`, `phone`, `email`, `status`, `website`, `sales_rep`, `project_type`, `project_description`, `proposal_due_date`, `budget`, `deliverables`) VALUES
-(1, '', 'David', '', 'Smith', '0000-00-00 00:00:00', '', 'ABC', 'Food', '', '', '', 'France', 112245, 123456789, 'david@tes.com', 'Lead', 'www.testabc.com', 1, '', '', '', 15000, ''),
-(2, '', 'Goerge', '', 'Wood', '0000-00-00 00:00:00', '', 'XYZ', 'Motor', '', '', '', '', 0, 123456789, 'goerg@test.com', 'Lead', 'www.mtobc.com', 1, '', '', '', 0, ''),
-(5, '', 'adam', '', 'smith', '2020-11-13 20:47:02', '', 'vzxvzx', 'xzvzx', '', '', '', '', 0, 123456789, 'dgsdgsd@wty.com', 'Proposal', 'www.mtobc.com', 1, '', '', '', 0, ''),
-(6, '', 'xvzxxzv', '', 'xvzxvzxv', '2020-11-13 20:56:27', '', 'uyttyi', 'reyery', '', '', '', '', 0, 123456789, 'werwrwe@wr.com', 'Customer / won', 'www.fggg.com', 1, '', '', '', 3400, '');
+-- INSERT INTO `crm_contact` (`id`, `contact_first`, `contact_last`, `title`, `company`, `address`, `phone`, `email`, `status`, `website`, `sales_rep`, `project_description`, `proposal_due_date`, `budget`,`campaign_id`) VALUES 
+-- (1, 'David', 'Smith', '', 'ABC', '', 123456, 'david@tes.com', 'Lead', 'www.testabc.com', 1, '', '', 15000,1),
+-- (2, 'Goerge', 'Wood', '', 'XYZ', '', 123456, 'goerg@test.com', 'Lead', 'www.mtobc.com', 1, '', '', 0,2),
+-- (5, 'adam', 'smith', '', 'vzxvzx', '', 123456, 'dgsdgsd@wty.com', 'Proposal', 'www.mtobc.com', 1, '', '', 0,3);
 
 -- --------------------------------------------------------
 
@@ -79,12 +122,24 @@ INSERT INTO `crm_tasks` (`id`, `created`, `task_type`, `task_description`, `task
 -- Table structure for table `crm_users`
 --
 
+CREATE TABLE `crm_admin` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `password` varchar(50) NOT NULL,
+  `status` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO `crm_admin` (`id`, `name`, `email`, `password`, `status`) VALUES
+(1, 'Sidd Pandit', 'sidd@gmail.com', '202cb962ac59075b964b07152d234b70', 1),
+(2, 'Sovit Khatri', 'sovit@gmail.com', '202cb962ac59075b964b07152d234b70', 1);
+
+
 CREATE TABLE `crm_users` (
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
   `email` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL,
-  `roles` enum('manager','sales') NOT NULL,
   `status` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -92,11 +147,11 @@ CREATE TABLE `crm_users` (
 -- Dumping data for table `crm_users`
 --
 
-INSERT INTO `crm_users` (`id`, `name`, `email`, `password`, `roles`, `status`) VALUES
-(1, 'Mark David', 'mark@phpzag.com', '202cb962ac59075b964b07152d234b70', 'sales', 1),
-(2, 'Andy Smith', 'andy@phpzag.com', '202cb962ac59075b964b07152d234b70', 'manager', 1),
-(3, 'Mary', 'mary@phpzag.com', '202cb962ac59075b964b07152d234b70', 'sales', 1),
-(4, 'Rich', 'rich@phpzag.com', '202cb962ac59075b964b07152d234b70', 'sales', 1);
+INSERT INTO `crm_users` (`id`, `name`, `email`, `password`, `status`) VALUES
+(1, 'Ram', 'ram@phpzag.com', '202cb962ac59075b964b07152d234b70', 1),
+(2, 'Shyam', 'shyam@phpzag.com', '202cb962ac59075b964b07152d234b70', 1),
+(3, 'Hari', 'hari@phpzag.com', '202cb962ac59075b964b07152d234b70', 1);
+
 
 --
 -- Indexes for dumped tables
