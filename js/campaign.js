@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  var campaignRecords = $("#campaignListing").DataTable({
+  var campaignRecords = $("#campaignsListing").DataTable({
     lengthChange: false,
     processing: true,
     serverSide: true,
@@ -9,7 +9,7 @@ $(document).ready(function () {
     ajax: {
       url: "campaign_action.php",
       type: "POST",
-      data: { action: "listCampaign" },
+      data: { action: "listCampaigns" },
       dataType: "json",
     },
     columnDefs: [
@@ -34,35 +34,6 @@ $(document).ready(function () {
     });
   });
 
-  $("#campaignListing").on("click", ".update", function () {
-    var id = $(this).attr("id");
-    var action = "getCampaign";
-    $.ajax({
-      url: "campaign_action.php",
-      method: "POST",
-      data: { id: id, action: action },
-      dataType: "json",
-      success: function (data) {
-        $("#campaignModal")
-          .on("shown.bs.modal", function () {
-            $("#campaign_id").val(data.id);
-            $("#campaign_name").val(data.name);
-            $("#campaign_desc").val(data.description);
-            $("#campaign_start_date").val(data.start_date);
-            $("#campaign_end_date").val(data.end_date);
-            $("#campaign_status").val(data.status);
-            $(".modal-title").html("<i class='fa fa-plus'></i> Edit Campaign");
-            $("#action").val("updateCampaign");
-            $("#save").val("Save");
-          })
-          .modal({
-            backdrop: "static",
-            keyboard: false,
-          });
-      },
-    });
-  });
-
   $("#campaignModal").on("submit", "#campaignForm", function (event) {
     event.preventDefault();
     $("#save").attr("disabled", "disabled");
@@ -71,16 +42,25 @@ $(document).ready(function () {
       url: "campaign_action.php",
       method: "POST",
       data: formData,
-      success: function (data) {
+      dataType: "json", // Expect JSON response
+      success: function (response) {
+        // Check if there's a message
+        if (response.message) {
+          alert(response.message); // Display the message
+        }
         $("#campaignForm")[0].reset();
         $("#campaignModal").modal("hide");
         $("#save").attr("disabled", false);
         campaignRecords.ajax.reload();
       },
+      error: function (xhr, status, error) {
+        // Handle error
+        console.log(xhr.responseText); // Log the error response
+      },
     });
   });
 
-  $("#campaignListing").on("click", ".delete", function () {
+  $("#campaignsListing").on("click", ".delete", function () {
     var id = $(this).attr("id");
     var action = "deleteCampaign";
     if (confirm("Are you sure you want to delete this record?")) {
@@ -88,8 +68,16 @@ $(document).ready(function () {
         url: "campaign_action.php",
         method: "POST",
         data: { id: id, action: action },
-        success: function (data) {
+        dataType: "json", // Expect JSON response
+        success: function (response) {
+          if (response.message) {
+            alert(response.message); // Display the message
+          }
           campaignRecords.ajax.reload();
+        },
+        error: function (xhr, status, error) {
+          // Handle error
+          console.log(xhr.responseText); // Log the error response
         },
       });
     } else {
