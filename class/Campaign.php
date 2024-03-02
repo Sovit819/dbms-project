@@ -57,9 +57,10 @@ class Campaigns {
     }
 
     public function updateCampaign($campaign_id, $name, $start_date, $end_date, $description, $status, $social_media){
+       
         $sqlQuery = "UPDATE ".$this->campaignTable." SET `name` = ?, `start_date` = ?, `end_date` = ?, `description` = ?, `status` = ?, `social_media` = ? WHERE `id` = ?";
         $stmt = $this->conn->prepare($sqlQuery);
-        $stmt->bind_param("sssssii", $name, $start_date, $end_date, $description, $status, $social_media, $campaign_id);
+        $stmt->bind_param("ssssssi", $name, $start_date, $end_date, $description, $status, $social_media, $campaign_id);
         if($stmt->execute()){
             return true;
         }
@@ -86,6 +87,18 @@ class Campaigns {
             // For simplicity, I'll just return false here
             return false;
         }
+    }
+
+    public function listActiveCampaignsFromView(){
+        $sqlQuery = "SELECT * FROM ActiveCampaigns";
+        $stmt = $this->conn->prepare($sqlQuery);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $activeCampaigns = array();
+        while ($campaign = $result->fetch_assoc()) {
+            $activeCampaigns[] = $campaign;
+        }
+        return $activeCampaigns;
     }
     
 

@@ -119,48 +119,17 @@ INSERT INTO `crm_admin` (`name`, `email`, `password`, `status`) VALUES
 -- Add triggers for the crm_campaign table
 DELIMITER //
 
-CREATE TRIGGER before_campaign_insert
-BEFORE INSERT ON crm_campaign
+CREATE TRIGGER update_campaign_status
+BEFORE UPDATE ON crm_campaign
 FOR EACH ROW
 BEGIN
-    -- Check if the start_date is less than today's date
-    IF NEW.start_date < CURDATE() THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Start date must be today or a future date';
-    END IF;
-
-    -- Check if the end_date is less than today's date
-    IF NEW.end_date < CURDATE() THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'End date must be today or a future date';
-    END IF;
-
-    -- Check if the end_date is less than the start_date
-    IF NEW.end_date < NEW.start_date THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'End date cannot be less than the start date';
+    IF NEW.end_date < NOW() THEN
+        SET NEW.status = 'Inactive';
     END IF;
 END;
 //
 
 DELIMITER ;
 
-DELIMITER //
-
-DELIMITER //
-
--- CREATE TRIGGER before_campaign_status_update
--- BEFORE UPDATE ON crm_campaign
--- FOR EACH ROW
--- BEGIN
---     -- Check if the start_date is today or in the past and status is Active
---     IF NEW.start_date > CURDATE() AND NEW.status = 'Active' THEN
---         SIGNAL SQLSTATE '45000'
---         SET MESSAGE_TEXT = 'Cannot set status to Active for future start dates';
---     END IF;
--- END;
--- //
-
--- DELIMITER ;
 
 
