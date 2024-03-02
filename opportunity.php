@@ -13,7 +13,7 @@ if(!$user->loggedIn()) {
 }
 include('inc/header4.php');
 ?>
-<title>phpzag.com : Demo Customer Relationship Management (CRM) System</title>
+<title>CRM System</title>
 <script src="js/opportunity.js"></script>	
 <body>
 	<?php include('top_menus.php'); ?>

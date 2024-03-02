@@ -49,6 +49,13 @@ public function login($email, $password, $loginType){
 			return 0;
 		}
 	}
+	public function getLoggedInUserId() {
+        if (!empty($_SESSION["userid"])) {
+            return $_SESSION["userid"];
+        } else {
+            return null; // Or you can return false, depending on how you handle null values
+        }
+    }
 	
 	public function isAdmin (){
 		if(!empty($_SESSION["userid"]) && $_SESSION["role"] == 'admin') {
@@ -253,6 +260,32 @@ public function login($email, $password, $loginType){
         $result = $stmt->get_result()->fetch_assoc();
         return $result;
     }
+	public function listActiveCampaigns(){
+		$sqlQuery = "SELECT * FROM ".$this->campaignTable." WHERE status = 'Active'";
+		$stmt = $this->conn->prepare($sqlQuery);
+		
+		if (!$stmt) {
+			// Handle error
+			echo "Error in preparing statement: " . $this->conn->error;
+			return null;
+		}
+	
+		if (!$stmt->execute()) {
+			// Handle error
+			echo "Error in executing statement: " . $stmt->error;
+			return null;
+		}
+	
+		$result = $stmt->get_result();
+		$activeCampaigns = array();
+		
+		while ($campaign = $result->fetch_assoc()) {
+			$activeCampaigns[] = $campaign;
+		}
+		
+		return $activeCampaigns;
+	}
+	
 
     public function updateCampaign($campaign_id, $name, $start_date, $end_date, $description, $status, $social_media){
         $sqlQuery = "UPDATE ".$this->campaignTable." SET `name` = ?, `start_date` = ?, `end_date` = ?, `description` = ?, `status` = ?, `social_media` = ? WHERE `id` = ?";

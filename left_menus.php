@@ -1,6 +1,6 @@
 <div class="col-md-3 col-lg-2 sidebar-offcanvas" id="sidebar" role="navigation">
 <ul class="nav flex-column pl-1 left-menus">	
-<li class="nav-item"><a class="nav-link" href="dashboard.php"><strong>Dashboard</strong></a></li>	
+<!-- <li class="nav-item"><a class="nav-link" href="dashboard.php"><strong>Dashboard</strong></a></li>	 -->
 <?php if($_SESSION["role"] == 'admin') { ?>
 	<li class="nav-item"><a class="nav-link" href="sales_people.php"><strong>Sales People</strong></a></li>
 	<li class="nav-item"><a class="nav-link" href="tasks.php"><strong>Tasks</strong></a></li>

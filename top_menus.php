@@ -5,7 +5,7 @@
     <div class="navbar-collapse collapse" id="collapsingNavbar">
       <ul class="navbar-nav">
         <li class="nav-item active">
-           <h2><a class="nav-link" href="dashboard.php">Customer Relationship Management (CRM) System<span class="sr-only"></span></a></h2>
+           <h2><a class="nav-link" style="color:#ffffff" href="dashboard.php">Customer Relationship Management (CRM) System<span class="sr-only"></span></a></h2>
         </li>       
       </ul> 	  
 	  <ul class="navbar-nav ml-auto">

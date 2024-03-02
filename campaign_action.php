@@ -51,9 +51,15 @@ if(!empty($_POST['action']) && $_POST['action'] == 'updateCampaign') {
     $campaign->updateCampaign();
 }
 
-if(!empty($_POST['action']) && $_POST['action'] == 'deleteCampaign') {
-    $campaign->id = $_POST["id"];
-    $campaign->deleteCampaign();
+if (!empty($_POST['action']) && $_POST['action'] == 'deleteCampaign') {
+    $campaignId = $_POST['id'];
+
+    // Call the deleteCampaign method from your Campaigns class
+    if ($campaign->deleteCampaign($campaignId)) {
+        echo "Campaign deleted successfully";
+    } else {
+        echo "Failed to delete campaign";
+    }
 }
 echo json_encode($response);
 ?>
